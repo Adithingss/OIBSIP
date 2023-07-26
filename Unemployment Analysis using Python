@@ -1,0 +1,69 @@
+import pandas as pd
+import numpy as np
+import seaborn as sns
+from matplotlib import pyplot as plt
+import plotly.express as px
+dk= pd.read_csv("Unemployment in India.csv")
+dk= pd.read_csv("Unemployment_Rate_upto_11_2020.csv")
+dk
+dk.sample(8)
+dk.shape
+print("Rows--->", dk.shape[0])
+print("Columns--->", dk.shape[1])
+dk.isnull()
+dk.isnull().sum()
+dk.describe()
+dk.info()
+dk.info
+print(dk.describe)
+dk.duplicated().sum()
+dk.dtypes
+dk.columns= ['States','Date','Frequency','Estimated Unemployment Rate','Estimated Employed','Estimated Labour Participation Rate','Region','longitude','latitude']
+dk
+print(dk)
+dk[['Day','Month','Year']]=dk['Date'].str.split('-', expand=True)
+dk
+dk.drop(columns=['Frequency'],axis=0,inplace=True)
+dk
+dk[:8]
+sns.heatmap(dk.corr(),annot=True)
+plt.show()
+#Analysing data by histogram plot
+dk.Region.value_counts()
+dk.columns
+plt.title('Indian Unemployment')
+sns.histplot(x= "Estimated Employed", hue= "Region", data=dk)
+plt.show()
+plt.figure(figsize=(5,6))
+plt.title('Indian Unemployment')
+sns.histplot(x="Estimated Unemployment Rate", hue="Region",data=dk)
+plt.show()
+fig = px.box(dk,x='States',y='Estimated Unemployment Rate',color='States',title='Unemployment rate',template='plotly')
+fig.update_layout(xaxis={'categoryorder':'total descending'})
+fig.show()
+plot_ump = dk[['Estimated Unemployment Rate','States']]
+
+data_unemp = plot_ump.groupby('States').mean().reset_index()
+
+data_unemp = data_unemp.sort_values('Estimated Unemployment Rate')
+
+fig = px.bar(data_unemp, x='States',y='Estimated Unemployment Rate',color='States',
+            title='Average Unemployment Rate in each state',template='plotly')
+
+fig.show()
+fig = px.scatter_geo(dk,'longitude', 'latitude', color="Region",
+                     hover_name="States", size="Estimated Unemployment Rate",
+                     animation_frame="Date",scope='asia',template='plotly',title='Impack of lockdown on employement across regions')
+
+fig.layout.updatemenus[0].buttons[0].args[1]["frame"]["duration"] = 2000
+
+fig.update_geos(lataxis_range=[5,35], lonaxis_range=[65, 100],oceancolor="#6dd5ed",
+    showocean=True)
+
+fig.show()
+unemployment = dk[["States","Region","Estimated Unemployment Rate"]]
+figure = px.sunburst(unemployment,values="Estimated Unemployment Rate", 
+                     path=["Region","States"],color_continuous_scale='RdY1Gn',
+                     title = "Unemployment in India",width=700,height=700,)
+figure.show()
+
